@@ -1,0 +1,66 @@
+import pandas as pd 
+
+
+# Keyword taxonomy for aerospace and defence 
+
+taxonomy_digital = {
+    "AI Big data and analytics": [" ai ", "ai-based", "ai-driven", "ai-powered", "ai algorithms", "machine learning", "deep learning", "neural networks", "computer vision", "image recognition", "speech recognition", 
+                              "natural language processing", "nlp", "natural language understanding", "natural language generation", "reinforcement learning", "predictive analytics", "predictive modelling", 
+                              "sentiment analysis", "facial recognition", "chatbots", "virtual assistants", "artificial intelligence", "cognitive computing", "image analytics", "generative ai", "explainable ai", 
+                              "edge ai", "ai-enabled", "ai based", "ai enabled", "ai powered", "ai driven", "deep-learning",  "data warehouse", "data lake", "docker", "kubernetes", "cloud computing", "big data analytics", "data processing", "data mining", "predictive analytics", 
+                                    "data visualisation", "data security", "big data tools",  "data integration", "data analytics ",  "machine data analytics", "ai in big data", "data governance", "big data platforms",  "smart data", "data science"],
+    "Advanced manufacturing and Robotics": ["UAV industry","drone","industrial robot*", "manufacturing automation", "robotic assembly", "cobot", "robotic welding", "automated guided vehicles",  "autonomous mobile robot", "cnc robot", "plc ", "program logic controller", 
+                                            "robotic quality inspection", "robotic material handling", "factory automation", "robotic arms", "robotic machining", "automation technology", "robotic process automation", "robotic workcell", "robotic palletizing", 
+                                            "robotic sensor", "robotic actuator", "machine vision", "mechatronics", "robotic control systems", "robotic software", "smart manufacturing", "precision robot", "robot*", "exoskeleton", "additive manufacturing", "modular construction", "modular", "autonomous robot", "offsite Construction", "3D printing", "additive construction"],
+    "Internet of Things": ["internet of things", " iot ",  "internet of everything", "industrial iot", "iiot", "smart manufacturing", "connected factory", "iot in production", "iot manufacturing systems", "predictive maintenance", 
+                           "iot asset tracking", "machine-to-machine communication", "real-time monitoring", "industrial sensors", "smart industrial devices", "iot supply chain", "sensor technology",
+                           "factory iot solution", "industrial connectivity", "iot quality control",  "iot safety systems", "energy management iot", "smart factory technology", "iot process optimisation"],
+    "Augmented and Virtual reality": ["augmented reality", "virtual reality", "ar/vr", "immersive", "extended reality",
+                                      " ar ", " vr ", "mixed reality", "vr training", "metaverse"],
+    "Cloud technology": [ "cloud computing", "cloud infrastructure", "cloud storage", "cloud technology", 
+                                       "cloud system", "cloud services",  "cloud platform","is a software", "hybrid cloud", "software as a service", "serverless", "platform as a service", "provides software",  "cloud computing", "cloud storage", 
+                         "cloud services", "cloud application", "scalable cloud", "edge computing",  "apache spark", "cloud management", "cloud-based analytics"],
+     "Blockchain": [ "smart contracts in manufacturing", "distributed manufacturing ledger", "blockchain","blockchain-based", "distributed ledger", "ethereum ", " token ", 
+                   " smart contract", "hyperledger", "crypto", "traceability software"]
+  
+    }
+taxonomy_green = {
+    "Recycling technologies": ["recycling technology", "made from recycled", "transforming waste", "chemical recycling", "recycling process", "construction waste", "waste disposal", "transforming waste", "waste recycling", "recycling company"], 
+    "Advanced materials": ["sustainable aviation fuel", "carbon fiber component", "green propellants", "co2-neutral aviation fuel", "sustainable fuel", "composite material", "composite structure", "biofuel", "synthet"],
+    "Energy saving technologies": ["electric propulsion", "hybrid propulsion systems", "green in-space propulsion", "intelligent propulsion", "propulsion technology", "electric-hybrid propulsion", "propulsion solution", "lithium battery", "lithium-ion battery", "fuel cells"],
+    "Clean production technologies": ["reusable launcher", "additive manufacturing"]
+}
+
+
+
+
+records = []
+
+# Digital taxonomy 
+for category, keywords in taxonomy_digital.items():
+
+    for keyword in keywords:
+
+        records.append({'category': category, 'keyword': keyword, 'taxonomy_group': 'Digital'})
+
+# green taxonomy 
+for category, keywords in taxonomy_green.items():
+
+    for keyword in keywords:
+
+        records.append({'category': category, 'keyword': keyword, 'taxonomy_group': 'Green'})
+
+
+
+
+taxonomy_df = pd.DataFrame(records)
+
+
+
+taxonomy_df.to_csv('taxonomy_keywords.csv', index=False)
+
+print("CSV file 'taxonomy_keywords.csv' created")
+
+
+
+

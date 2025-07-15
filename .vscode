@@ -1,0 +1,15 @@
+{
+  // interpreter & env
+  "python.defaultInterpreterPath": "",      
+  "python.envFile": "${workspaceFolder}/.env",
+
+  // Jupyter defaults
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "jupyter.jupyterServerType": "local",
+
+  // testing
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [ "code_testing" ]
+}
+
