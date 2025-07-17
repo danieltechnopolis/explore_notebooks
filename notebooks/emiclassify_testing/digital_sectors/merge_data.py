@@ -9,9 +9,9 @@ DATA_PATH = os.getenv("DATA_DIR")
 print(f"DATA_PATH: {DATA_PATH}")
 
 
-data_path_1 = os.path.join(DATA_PATH, 'digital_sectors_merge/EU_Digital_Sectors_20250604.xlsx')
-data_path_2 = os.path.join(DATA_PATH, 'cb_net0_companies_concat.csv')
-save_path = os.path.join(DATA_PATH, 'digital_sectors_merge/merged_data_digital_sectors.xlsx')
+data_path_1 = os.path.join(DATA_PATH, 'digital_sectors_merge/EU_Digital_Sectors_20250604.xlsx') # type: ignore
+data_path_2 = os.path.join(DATA_PATH, 'cb_net0_companies_concat.csv') # type:ignore 
+save_path = os.path.join(DATA_PATH, 'digital_sectors_merge/merged_data_digital_sectors.xlsx') # type:ignore
 
 # %%
 df_full = pd.read_csv(data_path_2)

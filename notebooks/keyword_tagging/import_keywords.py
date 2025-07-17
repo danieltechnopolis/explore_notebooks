@@ -100,3 +100,15 @@ def find_keywords_from_df(text, keyword_df):
         .unique()
     )
     return ", ".join([cat.strip() for cat in matched_categories])
+
+
+
+
+def normalize_text(text):
+    if pd.isnull(text):
+        return ""
+
+    text = text.lower()
+    text = re.sub(r'[^\w\s]', ' ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
