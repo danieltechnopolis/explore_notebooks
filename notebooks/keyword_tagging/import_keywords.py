@@ -1,6 +1,6 @@
 import pandas as pd  # noqa: F401
 import re
-
+import numpy as np
 
 
 
@@ -59,8 +59,8 @@ def extract_keywords(
 def clean_text(text):
 
     text = text.lower()
-    text = re.sub(r'[^\w\s]', ' ', text)   # Replace all punctuation with space
-    text = re.sub(r'\s+', ' ', text)       # Collapse multiple spaces/newlines to one space
+    text = re.sub(r'[^\w\s]', ' ', text)   
+    text = re.sub(r'\s+', ' ', text)       
     return text.strip()
 
 
@@ -103,12 +103,15 @@ def find_keywords_from_df(text, keyword_df):
 
 
 
+def find_keywords_similarity(search_vector, keyword_vector, keyword_text, threshold=0.8):
+    
+    dot = np.dot(keyword_vector, search_vector)
+    company_norm = np.linalg.norm(search_vector)
+    keyword_norms = np.linalg.norm(keyword_vector, axis=1)
+    sims = dot / (keyword_norms * company_norm + 1e-8)
+    idx = np.argmax(sims)
+    if sims[idx] >= threshold:
+        return (keyword_text[idx], sims[idx])
+    else:
+        return (None, sims[idx])
 
-def normalize_text(text):
-    if pd.isnull(text):
-        return ""
-
-    text = text.lower()
-    text = re.sub(r'[^\w\s]', ' ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
