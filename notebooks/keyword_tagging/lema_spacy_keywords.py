@@ -4,9 +4,15 @@ from dotenv import load_dotenv
 import pandas as pd
 import spacy
 from spacy.matcher import PhraseMatcher
-# %%
-load_dotenv()
+from tqdm import tqdm
 
+
+
+
+
+# %%
+
+load_dotenv()
 DATA_PATH = os.getenv("DATA_DIR")
 print(f"DATA_PATH: {DATA_PATH}")
 
@@ -24,13 +30,34 @@ keywords_df['Keyword'] = (
 )
 
 
+
+
+# %%
+nlp = spacy.load('en_core_web_sm', disable=['ner', 'parser'])
+
+def lemmatize_phrase(phrase):
+    return ' '.join([token.lemma_ for token in nlp(phrase)])
+
+keywords_df['Keyword_lemma'] = keywords_df['Keyword'].apply(lemmatize_phrase)
+ 
+
+
+
+
+
+# %%
 companies_df = pd.read_csv(DATA_PATH + "/cb_net0_companies_concat.csv",  # type: ignore
     usecols=['org_ID', 'organisation_name', 'short_description', 'description', 'data_source'],
     dtype={'org_ID': 'string', 'organisation_name': 'string', 'short_description': 'string', 'description': 'string'},
     index_col=False)
-companies_df = companies_df[companies_df['data_source'] != 'net0']
+companies_df = companies_df[companies_df['data_source'] != 'net0'].copy()
 
 print(companies_df.shape)
+
+
+
+
+
 
 # %%
 companies_df['search_text'] = (
@@ -43,38 +70,46 @@ companies_df['search_text'] = (
 
 companies_df.drop(['short_description', 'description'], axis=1, inplace=True)
 
+
+
+
+
+
 # %%
-nlp = spacy.load('en_core_web_sm', disable=['ner', 'parser'])  
 matcher = PhraseMatcher(nlp.vocab, attr='LEMMA')
 
-
-# %%
-# Extract lemmantized phrases
-def lemmatize_phrase(phrase):
-    # Convert a phrase to lemma form
-    return ' '.join([token.lemma_ for token in nlp(phrase)])
-
-keywords_df['Keyword_lemma'] = keywords_df['Keyword'].apply(lemmatize_phrase)
 unique_lemmatized = keywords_df['Keyword_lemma'].unique()
 patterns = [nlp(phrase) for phrase in unique_lemmatized]
 matcher.add("KEYWORDS", patterns)
 
-#Extract lemmatized matches from descriptions
-def extract_lemmatized_matches(text):
-    doc = nlp(text)
-    matches = matcher(doc)
-    # Get the matched span as text 
-    return list(set([doc[start:end].text.lower() for _, start, end in matches]))
 
-companies_df['matched_keywords_lemma'] = companies_df['search_text'].apply(extract_lemmatized_matches)
+
+
+
 
 # %%
-matches_exploded = (
-    companies_df[['org_ID', 'organisation_name', 'search_text', 'matched_keywords']]
-    .explode('matched_keywords')
-    .dropna(subset=['matched_keywords'])
-    .merge(keywords_df[['Keyword']], left_on='matched_keywords', right_on='Keyword', how='left')
+def doc_matches(doc):
+    matches = matcher(doc)
+    return list(set([doc[start:end].text.lower() for _, start, end in matches]))
+
+texts = companies_df['search_text'].tolist()
+matches_list = []
+
+print("Running keyword matching...")
+for doc in tqdm(nlp.pipe(texts, batch_size=500, n_process=1), total=len(texts)):
+    matches_list.append(doc_matches(doc))
+companies_df['matched_keywords_lemma'] = matches_list
+
+
+# %%
+tidy_matches = (
+    companies_df[['org_ID', 'organisation_name', 'data_source', 'search_text', 'matched_keywords_lemma']]
+    .explode('matched_keywords_lemma')
+    .rename(columns={'matched_keywords_lemma': 'matched_keyword'})
+    .dropna(subset=['matched_keyword'])
+    .reset_index(drop=True)
 )
+
 
 
 
